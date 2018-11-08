@@ -42,8 +42,8 @@ namespace homeagent
             public string ObservationStation { get; set; }
             public DateTime Time { get; set; }
 
-            public double TemperatureF { get; set; }
-            public double RelativeHumidity { get; set; }
+            public double? TemperatureF { get; set; }
+            public double? RelativeHumidity { get; set; }
             public string Description { get; set; }
         }
 
