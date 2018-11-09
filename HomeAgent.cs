@@ -13,10 +13,13 @@ namespace homeagent
         private NestClient NestClient;
         private WeatherGovClient WeatherGovClient;
 
+        private MongoDbStorage Storage;
+
         public HomeAgent(Config config)
         {
             this.NestClient = new NestClient(config.NestConfig);
             this.WeatherGovClient = new WeatherGovClient(config.WeatherGovConfig);
+            this.Storage = new MongoDbStorage();
         }
 
         public async Task Test()
@@ -35,6 +38,7 @@ namespace homeagent
                         foreach (var e in events)
                         {
                             file.WriteLine(string.Join("\t", e.GetStringValues()));
+                            await this.Storage.AddThermostatEvent(e);
                         }
                         file.Flush();
 
@@ -45,8 +49,17 @@ namespace homeagent
                         Console.WriteLine(e);
                     }
 
-                    WeatherObservation weather = await this.WeatherGovClient.GetCurrentWeather();
-                    Console.WriteLine(JsonConvert.SerializeObject(weather, Formatting.Indented));
+                    try
+                    {
+                        WeatherObservation weather = await this.WeatherGovClient.GetCurrentWeather();
+                        await this.Storage.AddWeatherObservation(weather);
+                        Console.WriteLine(JsonConvert.SerializeObject(weather, Formatting.Indented));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+
                     await Task.Delay(60 * 1000);
                 }
             }

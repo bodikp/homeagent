@@ -17,6 +17,7 @@ namespace homeagent
         {
             public string ConnectionString { get; set; } = "mongodb://localhost:27017";
             public string DatabaseName { get; set; } = "homeagent-data-test";
+            public string ThermostatEventsColName { get; set; } = "thermostatEvents";
             public string TemperatureColName { get; set; } = "temperatures";
             public string WeatherColName { get; set; } = "weather";
         }
@@ -26,7 +27,8 @@ namespace homeagent
         private MongoClient client;
         private IMongoDatabase database;
 
-        private IMongoCollection<NestThermostatMeasurementEvent> temperaturesCollection;
+        // private IMongoCollection<NestThermostatMeasurementEvent> temperaturesCollection;
+        private IMongoCollection<NestThermostatMeasurementEvent> thermostatEventsCollection;
         private IMongoCollection<WeatherObservation> weatherCollection;
 
         public MongoDbStorage()
@@ -34,13 +36,13 @@ namespace homeagent
             this.client = new MongoClient(this.config.ConnectionString);
             this.database = this.client.GetDatabase(this.config.DatabaseName);
 
-            this.temperaturesCollection = this.database.GetCollection<NestThermostatMeasurementEvent>(this.config.TemperatureColName);
+            this.thermostatEventsCollection = this.database.GetCollection<NestThermostatMeasurementEvent>(this.config.ThermostatEventsColName);
             this.weatherCollection = this.database.GetCollection<WeatherObservation>(this.config.WeatherColName);
         }
 
-        public async Task AddTemperatureData(NestThermostatMeasurementEvent data)
+        public async Task AddThermostatEvent(NestThermostatMeasurementEvent data)
         {
-            await this.temperaturesCollection.InsertOneAsync(data);
+            await this.thermostatEventsCollection.InsertOneAsync(data);
         }
 
         public async Task AddWeatherObservation(WeatherObservation weatherObservation) {

@@ -8,6 +8,8 @@ using System.Linq;
 using Newtonsoft.Json;
 using RestSharp;
 using Newtonsoft.Json.Converters;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace homeagent
 {
@@ -47,6 +49,9 @@ namespace homeagent
                 {
                     MeasurementTime = DateTime.UtcNow,
                     ThermostatId = thermostat.device_id,
+                    Name = thermostat.name,
+                    WhereId = thermostat.where_id,
+                    WhereName = thermostat.where_name,
                     LastContactTime = thermostat.last_connection,
                     Humidity = thermostat.humidity,
                     TemperatureScale = thermostat.temperature_scale,
@@ -160,7 +165,11 @@ namespace homeagent
         public class NestThermostatMeasurementEvent
         {
             public DateTime MeasurementTime { get; set; }
+
             public string ThermostatId { get; set; }
+            public string Name { get; set; }
+            public string WhereId { get; set; }
+            public string WhereName { get; set; }
 
             public DateTime LastContactTime { get; set; }
 
@@ -170,10 +179,13 @@ namespace homeagent
             public double TargetTemperatureF { get; set; }
             public double AmbientTemperatureF { get; set; }
 
+            [BsonRepresentation(BsonType.String)]
             [JsonConverter(typeof(StringEnumConverter))]
             public HvacMode HvacMode { get; set; }
 
-            [JsonConverter(typeof(StringEnumConverter))] public HvacState HvacState { get; set; }
+            [BsonRepresentation(BsonType.String)]
+            [JsonConverter(typeof(StringEnumConverter))]
+            public HvacState HvacState { get; set; }
 
             public static List<string> GetHeader()
             {

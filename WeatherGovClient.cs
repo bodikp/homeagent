@@ -64,11 +64,15 @@ namespace homeagent
             public ObservationLatestValue temperature { get; set; }
             public ObservationLatestValue relativeHumidity { get; set; }
 
-            public double temperatureF
+            public double? temperatureF
             {
                 get
                 {
-                    if (temperature.unitCode == ObservationLatestValue.degFUnitCode)
+                    if (!temperature.value.HasValue)
+                    {
+                        return null;
+                    }
+                    else if (temperature.unitCode == ObservationLatestValue.degFUnitCode)
                     {
                         return temperature.value;
                     }
@@ -89,7 +93,7 @@ namespace homeagent
             public static string degCUnitCode = "unit:degC";
             public static string degFUnitCode = "unit:degF";
 
-            public double value { get; set; }
+            public double? value { get; set; }
             public string unitCode { get; set; }
         }
     }
