@@ -26,40 +26,43 @@ namespace homeagent
         {
             if (this.NestClient != null)
             {
-                //StreamWriter file = new StreamWriter($"data_{DateTime.Now.Ticks}.tab");
-                //file.WriteLine(string.Join("\t", NestThermostatMeasurementEvent.GetHeader()));
+                StreamWriter file = new StreamWriter($"data.tab", true);
+                file.WriteLine(string.Join("\t", NestThermostatMeasurementEvent.GetHeader()));
 
                 while (true)
                 {
                     try
                     {
+                        Logger.WriteLine("querying thermostat");
                         List<NestThermostatMeasurementEvent> events = await this.NestClient.Measure();
 
                         foreach (var e in events)
                         {
-                            //file.WriteLine(string.Join("\t", e.GetStringValues()));
+                            file.WriteLine(string.Join("\t", e.GetStringValues()));
                             await this.Storage.AddThermostatEvent(e);
                         }
-                        //file.Flush();
+                        file.Flush();
 
-                        Console.WriteLine(JsonConvert.SerializeObject(events, Formatting.Indented));
+                        Logger.WriteLine(JsonConvert.SerializeObject(events, Formatting.Indented));
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Logger.WriteLine(e);
                     }
 
                     try
                     {
+                        Logger.WriteLine("querying weather");
                         WeatherObservation weather = await this.WeatherGovClient.GetCurrentWeather();
                         await this.Storage.AddWeatherObservation(weather);
-                        Console.WriteLine(JsonConvert.SerializeObject(weather, Formatting.Indented));
+                        Logger.WriteLine(JsonConvert.SerializeObject(weather, Formatting.Indented));
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Logger.WriteLine(e);
                     }
 
+                    Logger.WriteLine("sleeping");
                     await Task.Delay(60 * 1000);
                 }
             }
