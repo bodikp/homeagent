@@ -55,10 +55,10 @@ namespace homeagent
             await this.weatherCollection.InsertOneAsync(weatherObservation);
         }
 
-        public Task<List<NestThermostatMeasurementEvent>> GetThermostatEvents(DateTime t0, DateTime t1)
+        public async Task<List<NestThermostatMeasurementEvent>> GetThermostatEvents(DateTime t0, DateTime t1)
         {
-            //this.thermostatEventsCollection.
-            return null;
+            var events = (await this.thermostatEventsCollection.FindAsync(e => t0 <= e.MeasurementTime && e.MeasurementTime <= t1)).ToList();
+            return events;
         }
 
         public async Task Test()
