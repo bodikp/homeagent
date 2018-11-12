@@ -1,5 +1,6 @@
 using System.IO;
 using Newtonsoft.Json;
+using static homeagent.MongoDbStorage;
 using static homeagent.WeatherGovClient;
 
 namespace homeagent
@@ -8,6 +9,8 @@ namespace homeagent
     {
         public NestConfig NestConfig { get; set; }
         public WeatherGovConfig WeatherGovConfig { get; set; }
+
+        public MongoDbStorageConfig MongoDbStorageConfig { get; set; }
 
         public static Config Load(string path) => JsonConvert.DeserializeObject<Config>(File.ReadAllText(path));
 

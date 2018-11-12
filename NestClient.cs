@@ -164,6 +164,8 @@ namespace homeagent
 
         public class NestThermostatMeasurementEvent
         {
+            public ObjectId _id { get; set; }
+
             public DateTime MeasurementTime { get; set; }
 
             public string ThermostatId { get; set; }

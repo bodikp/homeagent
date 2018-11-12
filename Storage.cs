@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,7 +16,7 @@ namespace homeagent
 
     public class MongoDbStorage : IStorage
     {
-        public class Config
+        public class MongoDbStorageConfig
         {
             public string ConnectionString { get; set; } = "mongodb://localhost:27017";
             public string DatabaseName { get; set; } = "homeagent-data-test";
@@ -22,7 +25,7 @@ namespace homeagent
             public string WeatherColName { get; set; } = "weather";
         }
 
-        private Config config = new Config();
+        private MongoDbStorageConfig config = new MongoDbStorageConfig();
 
         private MongoClient client;
         private IMongoDatabase database;
@@ -31,8 +34,10 @@ namespace homeagent
         private IMongoCollection<NestThermostatMeasurementEvent> thermostatEventsCollection;
         private IMongoCollection<WeatherObservation> weatherCollection;
 
-        public MongoDbStorage()
+        public MongoDbStorage(MongoDbStorageConfig config)
         {
+            this.config = config;
+
             this.client = new MongoClient(this.config.ConnectionString);
             this.database = this.client.GetDatabase(this.config.DatabaseName);
 
@@ -45,8 +50,25 @@ namespace homeagent
             await this.thermostatEventsCollection.InsertOneAsync(data);
         }
 
-        public async Task AddWeatherObservation(WeatherObservation weatherObservation) {
+        public async Task AddWeatherObservation(WeatherObservation weatherObservation)
+        {
             await this.weatherCollection.InsertOneAsync(weatherObservation);
+        }
+
+        public Task<List<NestThermostatMeasurementEvent>> GetThermostatEvents(DateTime t0, DateTime t1)
+        {
+            //this.thermostatEventsCollection.
+            return null;
+        }
+
+        public async Task Test()
+        {
+            var events = (await this.thermostatEventsCollection.FindAsync(e => e.MeasurementTime > DateTime.MinValue)).ToList();
+
+            foreach (var e in events.OrderBy(x => x.MeasurementTime))
+            {
+                Console.WriteLine($"{e.MeasurementTime.ToLocalTime()}: {e.AmbientTemperatureF}, {e.HvacState}");
+            }
         }
     }
 }

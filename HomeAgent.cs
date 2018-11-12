@@ -19,15 +19,15 @@ namespace homeagent
         {
             this.NestClient = new NestClient(config.NestConfig);
             this.WeatherGovClient = new WeatherGovClient(config.WeatherGovConfig);
-            this.Storage = new MongoDbStorage();
+            this.Storage = new MongoDbStorage(config.MongoDbStorageConfig);
         }
 
         public async Task Test()
         {
             if (this.NestClient != null)
             {
-                StreamWriter file = new StreamWriter($"data_{DateTime.Now.Ticks}.tab");
-                file.WriteLine(string.Join("\t", NestThermostatMeasurementEvent.GetHeader()));
+                //StreamWriter file = new StreamWriter($"data_{DateTime.Now.Ticks}.tab");
+                //file.WriteLine(string.Join("\t", NestThermostatMeasurementEvent.GetHeader()));
 
                 while (true)
                 {
@@ -37,10 +37,10 @@ namespace homeagent
 
                         foreach (var e in events)
                         {
-                            file.WriteLine(string.Join("\t", e.GetStringValues()));
+                            //file.WriteLine(string.Join("\t", e.GetStringValues()));
                             await this.Storage.AddThermostatEvent(e);
                         }
-                        file.Flush();
+                        //file.Flush();
 
                         Console.WriteLine(JsonConvert.SerializeObject(events, Formatting.Indented));
                     }
