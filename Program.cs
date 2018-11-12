@@ -11,14 +11,14 @@ namespace homeagent
             {
                 string configPath = args[1];
                 Config config = Config.Load(configPath);
-                Console.WriteLine($"running with config {JsonConvert.SerializeObject(config, Formatting.Indented)}");
+                Logger.WriteLine($"running with config {JsonConvert.SerializeObject(config, Formatting.Indented)}");
 
                 HomeAgent homeAgent = new HomeAgent(config);
                 homeAgent.Test().Wait();
             }
             else
             {
-                Console.WriteLine("didn't understand the command");
+                Logger.WriteLine("didn't understand the command");
             }
         }
     }

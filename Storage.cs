@@ -16,7 +16,7 @@ namespace homeagent
         public class Config
         {
             public string ConnectionString { get; set; } = "mongodb://localhost:27017";
-            public string DatabaseName { get; set; } = "homeagent-data-test";
+            public string DatabaseName { get; set; } = "homeagent-data-prod";
             public string ThermostatEventsColName { get; set; } = "thermostatEvents";
             public string TemperatureColName { get; set; } = "temperatures";
             public string WeatherColName { get; set; } = "weather";

@@ -26,13 +26,14 @@ namespace homeagent
         {
             if (this.NestClient != null)
             {
-                StreamWriter file = new StreamWriter($"data_{DateTime.Now.Ticks}.tab");
+                StreamWriter file = new StreamWriter($"data.tab", true);
                 file.WriteLine(string.Join("\t", NestThermostatMeasurementEvent.GetHeader()));
 
                 while (true)
                 {
                     try
                     {
+                        Logger.WriteLine("querying thermostat");
                         List<NestThermostatMeasurementEvent> events = await this.NestClient.Measure();
 
                         foreach (var e in events)
@@ -42,24 +43,26 @@ namespace homeagent
                         }
                         file.Flush();
 
-                        Console.WriteLine(JsonConvert.SerializeObject(events, Formatting.Indented));
+                        Logger.WriteLine(JsonConvert.SerializeObject(events, Formatting.Indented));
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Logger.WriteLine(e);
                     }
 
                     try
                     {
+                        Logger.WriteLine("querying weather");
                         WeatherObservation weather = await this.WeatherGovClient.GetCurrentWeather();
                         await this.Storage.AddWeatherObservation(weather);
-                        Console.WriteLine(JsonConvert.SerializeObject(weather, Formatting.Indented));
+                        Logger.WriteLine(JsonConvert.SerializeObject(weather, Formatting.Indented));
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Logger.WriteLine(e);
                     }
 
+                    Logger.WriteLine("sleeping");
                     await Task.Delay(60 * 1000);
                 }
             }
