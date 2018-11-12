@@ -332,3 +332,5 @@ config.json
 nest_access_token_cache.json
 *.tab
 _logs/*
+backend/config*.json
+backend/config*.json
